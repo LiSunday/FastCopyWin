@@ -10,7 +10,7 @@ namespace FastCopyWin
         private ObservableCollection<Object> dataList = new();
 
         private ICollectionView? _collectionView;
-        public ICollectionView CollectionView
+        internal ICollectionView CollectionView
         {
             get
             {

@@ -66,7 +66,7 @@ namespace FastCopyWin
         }
         public enum KeyEnum
         {
-            M = (int)Keys.M
+            M = (int)Keys.M, ENTER = (int)Keys.Enter
         }
 
         public enum ControlKeyEnum

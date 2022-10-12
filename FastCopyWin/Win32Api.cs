@@ -43,5 +43,32 @@ namespace FastCopyWin
 
         [DllImport("user32.dll")]
         public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("gdi32.dll")]
+        public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
+        [DllImport("User32.dll", EntryPoint = "GetDC")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("User32.dll", EntryPoint = "ReleaseDC")]
+        public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("User32.dll")]
+        public static extern int GetSystemMetrics(int hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetClipboardData(uint uFormat, IntPtr hData);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
     }
 }

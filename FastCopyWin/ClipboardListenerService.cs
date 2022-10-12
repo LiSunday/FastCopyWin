@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -7,13 +6,6 @@ namespace FastCopyWin
 {
     internal class ClipboardListenerService
     {
-        // --- hook ---
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static public extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static public extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
-        // --- hook ---
-
         // --- var ---
         private const int WM_DRAWCLIPBOARD = 0x308;
         private const int WM_CHANGECBCHAIN = 0x30D;
@@ -38,6 +30,11 @@ namespace FastCopyWin
             return service;
         }
 
+        public void SetDataObject(Object obj)
+        {
+            Clipboard.SetDataObject(obj);
+        }
+
         public static Object GetClipboardData(DataType type)
         {
             // 你操作的时候可能系统正在操作 导致获取失败 这个时候快速重试就可以了
@@ -59,7 +56,7 @@ namespace FastCopyWin
 
         public void AddClipboardListener(HwndSource source, ChangeData function)
         {
-            mNextClipBoardViewerHWnd = SetClipboardViewer(source.Handle);
+            mNextClipBoardViewerHWnd = Win32Api.SetClipboardViewer(source.Handle);
             source.AddHook(WndProc);
             changeData = function;
         }
@@ -74,7 +71,7 @@ namespace FastCopyWin
                 case WM_DRAWCLIPBOARD:
                     {
                         // windows 文档要求把消息传递给窗口链的下一个
-                        SendMessage(mNextClipBoardViewerHWnd, msg, wParam.ToInt32(), lParam.ToInt32());
+                        Win32Api.SendMessage(mNextClipBoardViewerHWnd, msg, wParam.ToInt32(), lParam.ToInt32());
                         if (Clipboard.ContainsText())
                         {
                             changeData(DataType.TEXT, GetClipboardData(DataType.TEXT));
@@ -93,7 +90,7 @@ namespace FastCopyWin
                         }
                         else
                         {
-                            SendMessage(mNextClipBoardViewerHWnd, msg, wParam.ToInt32(), lParam.ToInt32());
+                            Win32Api.SendMessage(mNextClipBoardViewerHWnd, msg, wParam.ToInt32(), lParam.ToInt32());
                         }
                     }
                     break;

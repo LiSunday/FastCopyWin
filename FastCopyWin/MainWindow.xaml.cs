@@ -10,6 +10,8 @@ namespace FastCopyWin
 
     public partial class MainWindow : Window
     {
+        const float GOLDEN_RATIO_COEFFICIENT = 1.618f;
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -25,8 +27,17 @@ namespace FastCopyWin
             clipboardDataViewModel = new ClipboardDataViewModel();
             lvClipboard.DataContext = clipboardDataViewModel;
             lvClipboard.ItemsSource = clipboardDataViewModel.CollectionView;
+
+            // 设置主界面样式
+            float w = 0, h = 0;
+            DeviceUtils.GetDeviceCaps(ref w, ref h);
+            this.Height = h - (h / GOLDEN_RATIO_COEFFICIENT);
+            this.Width = GOLDEN_RATIO_COEFFICIENT * this.Height - this.Height;
+
             // 快捷键 显示界面
+            // TODO SundayLi 释放快捷键的时候才触发回调
             KeyboardUtils.AddKeyboardAction(KeyboardUtils.ControlKeyEnum.CTRL, KeyboardUtils.KeyEnum.M, ShowWindow);
+            KeyboardUtils.AddKeyboardAction(KeyboardUtils.ControlKeyEnum.CTRL, KeyboardUtils.KeyEnum.ENTER, CoverClipboardData);
             // 鼠标点击在非界面上 则隐藏界面
             MouseUtils.AddMouseAction(MouseUtils.KeyEnum.LEFT_KEY, HideWindow);
         }
@@ -58,15 +69,23 @@ namespace FastCopyWin
             }
         }
 
+        private void CoverClipboardData()
+        {
+            // TODO SundayLi 无法回写图像到剪切板
+            ClipboardListenerService.GetInstance().SetDataObject(lvClipboard.SelectedItem);
+            HideWindow();
+        }
+
         private void ShowWindow() 
         {
+            if (this.IsVisible) return;
             MouseUtils.MousePoint point = MouseUtils.GetCursorPosition();
-            // TODO SunayLi 研究一下屏幕分辨率、窗口相对位置、鼠标坐标的关系
-            this.Left = point.x;
-            this.Top = point.y;
-            clipboardDataViewModel.AddFirstData("x : " + point.x + " y : " + point.y);
+            double scale = DeviceUtils.GetPositionScale();
+            this.Left = point.x * scale;
+            this.Top = point.y * scale;
             this.Show();
             Keyboard.Focus(this);
+            Keyboard.Focus(lvClipboard);
         }
 
         private void HideWindow()

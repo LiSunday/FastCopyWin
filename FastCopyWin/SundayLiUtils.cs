@@ -15,9 +15,10 @@ namespace FastCopyWin
 
     public class SundayLiUtils
     {
-        /**
-         * 对话框式保存图片
-         */
+        /// <summary>
+        /// 对话框式保存图片
+        /// </summary>
+        /// <param name="bitmapSource">要保存的位图</param>
         public static void SaveImage(BitmapSource bitmapSource) 
         {
             SaveFileDialog sfd = new SaveFileDialog();
@@ -32,7 +33,12 @@ namespace FastCopyWin
             }
         }
 
-        public static PixelColor[,] GetPixels2(BitmapSource source)
+        /// <summary>
+        /// 转换位图
+        /// </summary>
+        /// <param name="source">待转换的位图</param>
+        /// <returns>分解后的颜色矩阵</returns>
+        private static PixelColor[,] GetPixels2(BitmapSource source)
         {
             PixelColor[,] result = new PixelColor[source.PixelWidth, source.PixelHeight];
 
@@ -61,6 +67,11 @@ namespace FastCopyWin
             return result;
         }
 
+        /// <summary>
+        /// 深拷贝一个位图 默认透明度为不透明
+        /// </summary>
+        /// <param name="srcImage_">待拷贝的位图</param>
+        /// <returns>拷贝后的位图</returns>
         public unsafe static BitmapSource CreateByOpacityColor(BitmapSource srcImage_)
         {
             BitmapSource srcImage = null;

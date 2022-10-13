@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace FastCopyWin
 {
@@ -32,7 +34,16 @@ namespace FastCopyWin
 
         public void SetDataObject(Object obj)
         {
-            Clipboard.SetDataObject(obj);
+            DataObject dataObject = new DataObject();
+            if (obj is Image)
+            {
+                Image image = (Image)obj;
+                dataObject.SetImage((BitmapSource)image.Source);
+            } else 
+            {
+                dataObject.SetData(obj);
+            }
+            Clipboard.SetDataObject(dataObject);
         }
 
         public static Object GetClipboardData(DataType type)

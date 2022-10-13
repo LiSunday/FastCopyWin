@@ -64,3 +64,4 @@ E:\vs_workspace\FastCopyWin\FastCopyWin\obj\Debug\net6.0-windows\refint\FastCopy
 E:\vs_workspace\FastCopyWin\FastCopyWin\obj\Debug\net6.0-windows\FastCopyWin.pdb
 E:\vs_workspace\FastCopyWin\FastCopyWin\obj\Debug\net6.0-windows\FastCopyWin.genruntimeconfig.cache
 E:\vs_workspace\FastCopyWin\FastCopyWin\obj\Debug\net6.0-windows\ref\FastCopyWin.dll
+E:\vs_workspace\FastCopyWin\FastCopyWin\obj\Debug\net6.0-windows\FastCopyWin_Content.g.cs

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static FastCopyWin.DeviceUtils;
 
 namespace FastCopyWin
 {
@@ -18,6 +19,29 @@ namespace FastCopyWin
         {
             public int x;
             public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct GUITHREADINFO
+        {
+            public int cbSize;
+            public int flags;
+            public IntPtr hwndActive;
+            public IntPtr hwndFocus;
+            public IntPtr hwndCapture;
+            public IntPtr hwndMenuOwner;
+            public IntPtr hwndMoveSize;
+            public IntPtr hwndCaret;
+            public RECT rectCaret;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            int left;
+            int top;
+            int right;
+            int bottom;
         }
 
         // 设置钩子
@@ -70,5 +94,33 @@ namespace FastCopyWin
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetGUIThreadInfo(uint idThread, ref GUITHREADINFO lpgui);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+
+        public static GUITHREADINFO? GetGuiThreadInfo(IntPtr hwnd)
+        {
+            if (hwnd != IntPtr.Zero)
+            {
+                uint threadId = GetWindowThreadProcessId(hwnd, IntPtr.Zero);
+                GUITHREADINFO guiThreadInfo = new GUITHREADINFO();
+                guiThreadInfo.cbSize = Marshal.SizeOf(guiThreadInfo);
+                if (GetGUIThreadInfo(threadId, ref guiThreadInfo) == false)
+                    return null;
+                return guiThreadInfo;
+            }
+            return null;
+        }
+
     }
 }

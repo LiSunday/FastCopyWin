@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace FastCopyWin
@@ -47,6 +50,22 @@ namespace FastCopyWin
             h = Win32Api.GetSystemMetrics(SM_CYSCREEN) * scale; //屏幕高度
         }
 
+        public static void SendText(string text, IntPtr hwnd, Win32Api.GUITHREADINFO? guiInfo)
+        {
+            if (guiInfo != null)
+            {
+                Debug.WriteLine(text + "  " + guiInfo.Value.hwndFocus);
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Win32Api.SendMessage(guiInfo.Value.hwndFocus, 0x0102, (IntPtr)(int)text[i], IntPtr.Zero);
+                }
+            }
+        }
 
+        public static void GetCurrentForeWindowInfo(out IntPtr hwnd, out Win32Api.GUITHREADINFO? guiInfo)
+        {
+            hwnd = Win32Api.GetForegroundWindow();
+            guiInfo = Win32Api.GetGuiThreadInfo(hwnd);
+        }
     }
 }

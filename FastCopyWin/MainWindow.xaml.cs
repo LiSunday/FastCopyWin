@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using static FastCopyWin.Win32Api;
 
 namespace FastCopyWin
 {
@@ -11,6 +13,8 @@ namespace FastCopyWin
     public partial class MainWindow : Window
     {
         const float GOLDEN_RATIO_COEFFICIENT = 1.618f;
+        IntPtr hwnd = IntPtr.Zero;
+        Win32Api.GUITHREADINFO? guiInfo = null;
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -87,13 +91,19 @@ namespace FastCopyWin
         private void CoverClipboardData()
         {
             if (!this.IsVisible) return;
-            ClipboardListenerService.GetInstance().SetDataObject(lvClipboard.SelectedItem);
+            Object obj = lvClipboard.SelectedItem;
+            ClipboardListenerService.GetInstance().SetDataObject(obj);
             HideWindow();
+            if (hwnd != IntPtr.Zero)
+            {
+                DeviceUtils.SendText(obj.ToString(), hwnd, guiInfo);
+            }
         }
 
         private void ShowWindow(bool isSelectFirst) 
         {
             if (this.IsVisible) return;
+            DeviceUtils.GetCurrentForeWindowInfo(out hwnd, out guiInfo);
             MouseUtils.MousePoint point = MouseUtils.GetCursorPosition();
             double scale = DeviceUtils.GetPositionScale();
             this.Left = point.x * scale;
